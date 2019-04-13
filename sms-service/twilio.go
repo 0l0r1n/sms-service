@@ -5,6 +5,6 @@ type TwilioService struct {
 	next SmsService
 }
 
-func (s *TwilioService) send(sms Sms) {
-
+func (twilio TwilioService) send(sms Sms) (SmsResult, error) {
+	return SmsResult{success: true}, nil
 }

@@ -4,6 +4,6 @@ package smsservice
 type SimpleNotificationService struct {
 }
 
-func (sns *SimpleNotificationService) send(sms SmsMessage) (SmsResult, error) {
+func (sns *SimpleNotificationService) Send(sms SmsMessage) (SmsResult, error) {
 	return SmsResult{success: true}, nil
 }

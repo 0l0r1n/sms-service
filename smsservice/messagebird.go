@@ -2,6 +2,7 @@ package smsservice
 
 import (
 	"log"
+	"os"
 
 	"github.com/messagebird/go-rest-api"
 	"github.com/messagebird/go-rest-api/sms"
@@ -12,9 +13,8 @@ type messageBirdService struct {
 	client *messagebird.Client
 }
 
-// NewMessageBird initiates the messagebird service is a gateway for sending messages using messagebird
-func NewMessageBird(next *SmsService) SmsService {
-	client := messagebird.New("") // TODO: insert key here
+func newMessageBird(next *SmsService) *SmsService {
+	client := messagebird.New(os.Getenv("MESSAGE_BIRD_KEY"))
 	mb := &messageBirdService{
 		next:   next,
 		client: client,
@@ -22,13 +22,14 @@ func NewMessageBird(next *SmsService) SmsService {
 	return mb
 }
 
-func (mb *messageBirdService) send(message SmsMessage) (SmsResult, error) {
-	msg, err := sms.Create(mb.client, "+31XXXXXXXXX",
-		[]string{"+31XXXXXXXXX"},
-		"Hi! This is your first message",
+func (mb *messageBirdService) Send(message SmsMessage) (SmsResult, error) {
+	msg, err := sms.Create(mb.client, message.Originator,
+		message.Recipients,
+		message.Body,
 		nil)
 	if err != nil {
 		log.Println(err)
+		return mb.next.Send(message)
 	}
 	log.Println(msg)
 	return SmsResult{success: true}, nil

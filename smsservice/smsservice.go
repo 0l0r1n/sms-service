@@ -1,13 +1,15 @@
 package smsservice
 
-// Sms is a sms message that will be handled by the SmsService
+// SmsMessage is a sms message that will be handled by a SmsService
 type SmsMessage struct {
-	originator string
+	Originator string
+	Recipients []string
+	Body       string
 }
 
 // SmsService represents a Sms notification gateway
 type SmsService interface {
-	send(sms SmsMessage) (SmsResult, error)
+	Send(sms SmsMessage) (SmsResult, error)
 }
 
 // SmsResult is returned when a Sms request is sent
@@ -17,5 +19,5 @@ type SmsResult struct {
 
 // GetChainOfServices returns the chain of responsibility, starting by Twilio, then message bird and lastly simple notification service
 func GetChainOfServices() SmsService {
-	return &TwilioService{next: NewMessageBird(nil)}
+	return &twilioService{next: newMessageBird(nil)}
 }

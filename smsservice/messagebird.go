@@ -1,6 +1,7 @@
 package smsservice
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -23,14 +24,16 @@ func newMessageBird(next SmsService) SmsService {
 }
 
 func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
-	msg, err := sms.Create(mb.client, message.Originator,
-		message.Recipients,
-		message.Body,
-		nil)
+	msg, err := sms.Create(mb.client, message.Originator, []string{message.Recipient}, message.Body, nil)
 	if err != nil {
-		log.Println(err)
+		switch errResp := err.(type) {
+		case messagebird.ErrorResponse:
+			for _, mbError := range errResp.Errors {
+				fmt.Printf("Error: %#v\n", mbError)
+			}
+		}
 		if mb.next == nil {
-			returnErrorResult(err)
+			return errorResult(err)
 		}
 		return mb.next.Send(message)
 	}

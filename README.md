@@ -21,3 +21,9 @@ In order to send a sms, a post request is necessary containing a json body with 
 ```
 
 Please note: in case our main service provider is down, we use a fallback implementation. That fallback implementation unfortunately does not allow setting the originator value.
+
+## TODO
+
+- Add tests
+- Implement error checks
+- Add catch all handler

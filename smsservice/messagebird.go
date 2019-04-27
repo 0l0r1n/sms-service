@@ -1,7 +1,6 @@
 package smsservice
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -29,7 +28,7 @@ func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
 		switch errResp := err.(type) {
 		case messagebird.ErrorResponse:
 			for _, mbError := range errResp.Errors {
-				fmt.Printf("Error: %#v\n", mbError)
+				log.Printf("Error: %#v\n", mbError)
 			}
 		}
 		if mb.next == nil {

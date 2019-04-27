@@ -2,9 +2,9 @@ package smsservice
 
 // SmsMessage is a sms message that will be handled by a SmsService
 type SmsMessage struct {
-	Originator string
-	Recipient  string
-	Body       string
+	Originator string `json:"originator"`
+	Recipient  string `json:"recipient"`
+	Body       string `json:"body"`
 }
 
 // SmsService represents a Sms notification gateway

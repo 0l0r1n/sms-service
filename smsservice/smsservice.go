@@ -9,7 +9,7 @@ type SmsMessage struct {
 
 // SmsService represents a Sms notification gateway
 type SmsService interface {
-	Send(sms SmsMessage) (SmsResult, error)
+	Send(sms *SmsMessage) (SmsResult, error)
 }
 
 // SmsResult is returned when a Sms request is sent
@@ -17,7 +17,11 @@ type SmsResult struct {
 	success bool
 }
 
-// GetChainOfServices returns the chain of responsibility, starting by Twilio, then message bird and lastly simple notification service
+// GetChainOfServices returns the chain of responsibility with fallback implementation for sending SMSs
 func GetChainOfServices() SmsService {
-	return &twilioService{next: newMessageBird(nil)}
+	return newMessageBird(nil)
+}
+
+func returnErrorResult(err error) (SmsResult, error) {
+	return SmsResult{success: false}, err
 }

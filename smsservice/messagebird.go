@@ -9,11 +9,11 @@ import (
 )
 
 type messageBirdService struct {
-	next   *SmsService
+	next   SmsService
 	client *messagebird.Client
 }
 
-func newMessageBird(next *SmsService) *SmsService {
+func newMessageBird(next SmsService) SmsService {
 	client := messagebird.New(os.Getenv("MESSAGE_BIRD_KEY"))
 	mb := &messageBirdService{
 		next:   next,
@@ -22,15 +22,19 @@ func newMessageBird(next *SmsService) *SmsService {
 	return mb
 }
 
-func (mb *messageBirdService) Send(message SmsMessage) (SmsResult, error) {
+func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
 	msg, err := sms.Create(mb.client, message.Originator,
 		message.Recipients,
 		message.Body,
 		nil)
 	if err != nil {
 		log.Println(err)
+		if mb.next == nil {
+			returnErrorResult(err)
+		}
 		return mb.next.Send(message)
 	}
+
 	log.Println(msg)
 	return SmsResult{success: true}, nil
 }

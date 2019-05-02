@@ -24,13 +24,13 @@ type twilioService struct {
 
 func (twilio *twilioService) Send(message *SmsMessage) (SmsResult, error) {
 	resp, _ := twilio.client.Do(buildRequest(message.Recipient, twilioNumber, message.Body))
-	log.Println(resp)
 	var data map[string]interface{}
 	decoder := json.NewDecoder(resp.Body)
 	err := decoder.Decode(&data)
+	log.Println(data)
 	if err == nil {
 		log.Println(data["sid"])
-		return SmsResult{success: true}, nil
+		return SmsResult{Success: true}, nil
 	}
 	if twilio.next == nil {
 		return errorResult(errors.New("Twilio request failed"))

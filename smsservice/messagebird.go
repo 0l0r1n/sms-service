@@ -38,5 +38,5 @@ func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
 	}
 
 	log.Println(msg)
-	return SmsResult{success: true}, nil
+	return SmsResult{Success: true}, nil
 }

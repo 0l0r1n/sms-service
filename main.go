@@ -11,6 +11,5 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/sms/", api.SmsHandler)
 	http.Handle("/", r)
-
 	http.ListenAndServe("localhost:8080", r)
 }

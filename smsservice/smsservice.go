@@ -14,7 +14,7 @@ type SmsService interface {
 
 // SmsResult is returned when a Sms request is sent
 type SmsResult struct {
-	success bool
+	Success bool `json:"success"`
 }
 
 // GetChainOfServices returns the chain of responsibility with fallback implementation for sending SMSs
@@ -23,5 +23,5 @@ func GetChainOfServices() SmsService {
 }
 
 func errorResult(err error) (SmsResult, error) {
-	return SmsResult{success: false}, err
+	return SmsResult{Success: false}, err
 }

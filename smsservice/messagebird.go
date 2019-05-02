@@ -22,8 +22,8 @@ func newMessageBird(next SmsService) SmsService {
 	return mb
 }
 
-func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
-	msg, err := sms.Create(mb.client, message.Originator, []string{message.Recipient}, message.Body, nil)
+func (mb *messageBirdService) Send(message *SmsMessage) SmsResult {
+	_, err := sms.Create(mb.client, message.Originator, []string{message.Recipient}, message.Body, nil)
 	if err != nil {
 		switch errResp := err.(type) {
 		case messagebird.ErrorResponse:
@@ -32,11 +32,10 @@ func (mb *messageBirdService) Send(message *SmsMessage) (SmsResult, error) {
 			}
 		}
 		if mb.next == nil {
-			return errorResult(err)
+			return errorResult()
 		}
 		return mb.next.Send(message)
 	}
 
-	log.Println(msg)
-	return SmsResult{Success: true}, nil
+	return SmsResult{Success: true}
 }

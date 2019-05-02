@@ -2,8 +2,6 @@ package smsservice
 
 import (
 	"encoding/json"
-	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -22,18 +20,16 @@ type twilioService struct {
 	client *http.Client
 }
 
-func (twilio *twilioService) Send(message *SmsMessage) (SmsResult, error) {
+func (twilio *twilioService) Send(message *SmsMessage) SmsResult {
 	resp, _ := twilio.client.Do(buildRequest(message.Recipient, twilioNumber, message.Body))
 	var data map[string]interface{}
 	decoder := json.NewDecoder(resp.Body)
 	err := decoder.Decode(&data)
-	log.Println(data)
-	if err == nil {
-		log.Println(data["sid"])
-		return SmsResult{Success: true}, nil
+	if resp.StatusCode >= 400 && twilio.next == nil {
+		return errorResult()
 	}
-	if twilio.next == nil {
-		return errorResult(errors.New("Twilio request failed"))
+	if err == nil {
+		return SmsResult{Success: true}
 	}
 	return twilio.next.Send(message)
 

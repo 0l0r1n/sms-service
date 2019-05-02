@@ -25,11 +25,13 @@ func SmsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := smsservice.GetChainOfServices().Send(&sms)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+	result := smsservice.GetChainOfServices().Send(&sms)
+	if !result.Success {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusAccepted)
 	}
+
 	output, _ := json.Marshal(result)
 
 	w.Header().Set("content-type", "application/json")
